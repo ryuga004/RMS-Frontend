@@ -9,7 +9,8 @@ const loadState = () => {
         if (serializedState === null) {
             return undefined;
         }
-        return { auth: JSON.parse(serializedState) };
+        const authState = JSON.parse(serializedState);
+        return { auth: { ...authState, isLoading: false, error: null } };
     } catch {
         return undefined;
     }
