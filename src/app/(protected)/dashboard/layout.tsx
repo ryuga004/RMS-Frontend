@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/redux/store";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -12,78 +12,70 @@ import {
   Settings,
   ChevronRight,
   ChevronDown,
-  LogIn,
   Compass,
   Bell,
   Inbox,
   Send,
   Shield,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
-import { isAdmin } from "@/types";
+import { isAdmin, ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT } from "@/types";
+import { useRouter } from "next/navigation";
+import { logoutAction } from "@/lib/redux/slices/authSlice";
 
-type NavItem = { href: string; label: string; icon: React.ElementType };
-type NavGroup = { label?: string; items: NavItem[]; collapsed?: boolean; isAdmin?: boolean };
+type NavItem = {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  requiredRoles?: number[];
+};
 
-const ADMIN_NAV_GROUPS: NavGroup[] = [
+type NavGroup = {
+  label?: string;
+  items: NavItem[];
+};
+
+const NAV_GROUPS: NavGroup[] = [
   {
     label: "Overview",
     items: [
-      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/", label: "Get Started", icon: LogIn },
-      { href: "/browse", label: "Explore", icon: Compass },
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_TENANT] },
+      { href: "/browse", label: "Explore", icon: Compass, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT] },
     ],
   },
   {
-    label: "Manage",
+    label: "Management",
     items: [
-      { href: "/dashboard/assets", label: "Listings", icon: FolderOpen },
-      { href: "/dashboard/tenants", label: "Tenants", icon: Users },
-      { href: "/dashboard/transactions", label: "Transactions", icon: CreditCard },
-    ],
-  },
-  {
-    label: "Notifications",
-    items: [
-      { href: "/dashboard/requests", label: "Requests", icon: Inbox },
-      { href: "/dashboard/audit-log", label: "Activity Log", icon: Bell },
-    ],
-  },
-  {
-    label: "Administration",
-    items: [
-      { href: "/dashboard/payment-plans", label: "Payment Settings", icon: Settings },
-    ],
-    isAdmin: true,
-  },
-];
+      { href: "/dashboard/assets", label: "Listings", icon: FolderOpen, requiredRoles: [ROLE_ID_ADMIN] },
+      { href: "/dashboard/tenants", label: "Tenants", icon: Users, requiredRoles: [ROLE_ID_ADMIN] },
 
-const TENANT_NAV_GROUPS: NavGroup[] = [
-  {
-    label: "Overview",
-    items: [
-      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/", label: "Get Started", icon: LogIn },
-      { href: "/browse", label: "Explore", icon: Compass },
+      { href: "/dashboard/rentals", label: "Rentals", icon: FolderOpen, requiredRoles: [ROLE_ID_TENANT] },
     ],
   },
   {
-    label: "My Activity",
+    label: "Activity",
     items: [
-      { href: "/dashboard/rentals", label: "Active Rentals", icon: FolderOpen },
-      { href: "/dashboard/transactions", label: "Payment History", icon: CreditCard },
-      { href: "/dashboard/pay", label: "Make a Payment", icon: CreditCard },
+      { href: "/dashboard/requests", label: "Requests", icon: Inbox, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT] },
+      { href: "/dashboard/invitations", label: "Invitations", icon: Bell, requiredRoles: [ROLE_ID_TENANT] },
+      { href: "/dashboard/messages", label: "Messages", icon: Send, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT] },
+      { href: "/dashboard/notifications", label: "Notifications", icon: Bell, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT] },
     ],
   },
   {
-    label: "Notifications",
+    label: "Payments",
     items: [
-      { href: "/dashboard/invitations", label: "Invitations", icon: Bell },
-      { href: "/dashboard/messages", label: "Messages", icon: Send },
-      { href: "/dashboard/requests", label: "Requests", icon: Inbox },
-      { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
+      { href: "/dashboard/transactions", label: "Transactions", icon: CreditCard, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT] },
+      { href: "/dashboard/pay", label: "Make a Payment", icon: CreditCard, requiredRoles: [ROLE_ID_TENANT] },
+      { href: "/dashboard/payment-plans", label: "Payment Plans", icon: Settings, requiredRoles: [ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN] },
+    ],
+  },
+  {
+    label: "Auditing",
+    items: [
+      { href: "/dashboard/audit-log", label: "Audit Log", icon: Shield, requiredRoles: [ROLE_ID_ADMIN] },
     ],
   },
 ];
@@ -94,12 +86,20 @@ interface NavGroupState {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
-  const admin = user ? isAdmin(user.roleId) : false;
-  const navGroups = admin ? ADMIN_NAV_GROUPS : TENANT_NAV_GROUPS;
+
+  // Filter nav items based on user's role
+  const filteredNavGroups = NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter(
+      (item) => !item.requiredRoles || item.requiredRoles.includes(user?.roleId || ROLE_ID_TENANT)
+    ),
+  })).filter((group) => group.items.length > 0); // Remove empty groups
 
   const [expandedGroups, setExpandedGroups] = useState<NavGroupState>(
-    navGroups.reduce((acc, _, idx) => ({ ...acc, [idx]: true }), {})
+    filteredNavGroups.reduce((acc, _, idx) => ({ ...acc, [idx]: true }), {})
   );
 
   const toggleGroup = (idx: number) => {
@@ -107,6 +107,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const isItemActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+
+  const handleLogout = () => {
+    dispatch(logoutAction());
+    router.push("/");
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -116,10 +121,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <aside className="hidden w-64 h-[calc(100vh-4rem)] border-r border-secondary bg-background/50 md:flex md:flex-col md:overflow-hidden md:flex-shrink-0">
           {/* Main Navigation */}
           <nav className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-6">
-              {navGroups
-                .filter((group) => !group.isAdmin || group.label !== "Administration")
-                .map((group, groupIdx) => (
+            <div className="space-y-4">
+              {filteredNavGroups.map((group, groupIdx) => (
                   <div key={groupIdx} className="space-y-3">
                     {/* Group Header */}
                     {group.label && (
@@ -168,68 +171,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </nav>
 
-          {/* Administration Section (Bottom) */}
-          <div className="border-t border-secondary space-y-6 p-4">
-            {/* Administration Group */}
-            {navGroups
-              .filter((group) => group.label === "Administration")
-              .map((group, groupIdx) => (
-                <div key={groupIdx} className="space-y-3">
-                  {/* Group Header */}
-                  {group.label && (
-                    <div
-                      className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-secondary/50 rounded-md transition-colors group/header"
-                      onClick={() => toggleGroup(navGroups.indexOf(group))}
-                    >
-                      <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/60 group-hover/header:text-foreground transition-colors">
-                        {group.label}
-                      </h3>
-                      <ChevronDown
-                        className={cn(
-                          "h-3.5 w-3.5 text-foreground/40 transition-transform group-hover/header:text-foreground/60",
-                          expandedGroups[navGroups.indexOf(group)] ? "rotate-0" : "-rotate-90"
-                        )}
-                      />
-                    </div>
-                  )}
-
-                  {/* Group Items */}
-                  {expandedGroups[navGroups.indexOf(group)] && (
-                    <div className="space-y-1 px-1">
-                      {group.items.map((item) => {
-                        const active = isItemActive(item.href);
-                        return (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all",
-                              active
-                                ? "bg-primary/10 text-primary"
-                                : "text-foreground/70 hover:bg-secondary/50 hover:text-foreground"
-                            )}
-                          >
-                            <item.icon className="h-4 w-4 flex-shrink-0" />
-                            <span className="flex-1">{item.label}</span>
-                            {active && <ChevronRight className="h-3.5 w-3.5 text-primary" />}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              ))}
-
-            {/* User Info */}
-            <div className="pt-2 border-t border-secondary/50">
-              <div className="space-y-2 px-3 py-2">
-                <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
-                  {admin ? "👤 Administrator" : "👤 Renter"}
-                </p>
-                <p className="text-sm font-medium text-foreground">{user?.name || "User"}</p>
-                <p className="text-xs text-foreground/50">{user?.email}</p>
-              </div>
-            </div>
+          <div className="border-t border-secondary space-y-4 p-4 bg-destructive/10">
+            <button
+              onClick={handleLogout}
+              className={cn(
+                "w-full flex items-center gap-3 rounded-md px-3 py-1 text-sm font-medium transition-all",
+                "text-destructive hover:bg-destructive/20 hover:text-destructive font-semibold"
+              )}
+            >
+              <LogOut className="h-4 w-4 flex-shrink-0" />
+              <span>Logout</span>
+            </button>
           </div>
         </aside>
 

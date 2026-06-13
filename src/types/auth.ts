@@ -15,7 +15,7 @@ export const ROLE_ID_TENANT = 3;
 export const ROLE_ID_SUPER_ADMIN = 1;
 
 export function isAdmin(roleId: number): boolean {
-  return roleId === ROLE_ID_ADMIN || roleId === ROLE_ID_SUPER_ADMIN;
+  return roleId === ROLE_ID_ADMIN;
 }
 
 export function isTenant(roleId: number): boolean {

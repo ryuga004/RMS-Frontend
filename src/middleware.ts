@@ -16,7 +16,6 @@ export function middleware(request: NextRequest) {
 
   if (!token) {
     const url = new URL("/login", request.url);
-    url.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(url);
   }
 
