@@ -19,10 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { to: "/", label: "Home" },
-  { to: "/browse", label: "Browse" },
-];
+const NAV_LINKS: { to: string; label: string }[] = [];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -68,11 +65,6 @@ const Navbar = () => {
 
         {/* Desktop actions */}
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/browse">
-            <Button variant="ghost" size="icon" className="text-muted-foreground">
-              <Search className="h-4 w-4" />
-            </Button>
-          </Link>
           <Link href="/dashboard/messages">
             <Button variant="ghost" size="icon" className="text-muted-foreground">
               <MessageSquare className="h-4 w-4" />

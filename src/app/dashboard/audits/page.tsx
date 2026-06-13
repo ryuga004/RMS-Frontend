@@ -52,11 +52,12 @@ const auditTypes: Array<AuditType> = [
 ];
 
 const auditActions: Array<AuditAction> = ["CREATE", "UPDATE", "DELETE"];
+const AUDIT_PAGE_SIZE_DEFAULT: number = 5;
 
 export default function AuditLogsPage() {
   const [filters, setFilters] = useState<FiltersState>(DEFAULT_FILTERS);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(20);
+  const [size, setSize] = useState<number>(AUDIT_PAGE_SIZE_DEFAULT);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AuditSearchResponse | null>(null);
@@ -120,8 +121,8 @@ export default function AuditLogsPage() {
   function handleReset() {
     setFilters(DEFAULT_FILTERS);
     setPage(0);
-    setSize(20);
-    fetchAudits(0, 20, DEFAULT_FILTERS);
+    setSize(AUDIT_PAGE_SIZE_DEFAULT);
+    fetchAudits(0, AUDIT_PAGE_SIZE_DEFAULT, DEFAULT_FILTERS);
   }
 
   function renderStatusBadge(status: number) {

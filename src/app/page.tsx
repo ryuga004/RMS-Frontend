@@ -162,30 +162,79 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA Footer */}
-        <section className="bg-background px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">Ready to Get Started?</h2>
-            <p className="mt-4 text-lg text-foreground/60">
-              Join thousands of landlords and tenants using AssertRent to simplify their rental process.
-            </p>
+        {/* Get Started Section */}
+        <section className="bg-gradient-to-b from-background to-secondary/20 px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-foreground sm:text-5xl">Get Started</h2>
+              <p className="mt-4 text-lg text-foreground/60">
+                Join as a landlord or tenant and start managing your rentals today
+              </p>
+            </div>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4">
+            <div className="grid gap-6 md:grid-cols-2">
               <Link href="/register?role=landlord">
-                <Button size="lg" className="w-full bg-primary hover:bg-primary/90 text-base">
-                  Get Started as Landlord
-                </Button>
+                <div className="group cursor-pointer rounded-lg border border-secondary p-8 transition-all hover:border-primary/30 hover:shadow-lg">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    📋
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">List Properties</h3>
+                  <p className="text-foreground/60 mb-6">
+                    Become a landlord and start earning by listing your properties on AssertRent
+                  </p>
+                  <Button className="w-full bg-primary hover:bg-primary/90">
+                    Sign Up as Landlord
+                  </Button>
+                </div>
               </Link>
+
               <Link href="/register?role=tenant">
-                <Button size="lg" variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/5 text-base">
-                  Get Started as Tenant
-                </Button>
+                <div className="group cursor-pointer rounded-lg border border-secondary p-8 transition-all hover:border-primary/30 hover:shadow-lg">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    🔑
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Find Rentals</h3>
+                  <p className="text-foreground/60 mb-6">
+                    Browse verified listings and find your perfect rental property
+                  </p>
+                  <Button className="w-full bg-primary hover:bg-primary/90">
+                    Sign Up as Tenant
+                  </Button>
+                </div>
               </Link>
             </div>
 
-            <p className="mt-8 text-sm text-foreground/50">
-              Already have an account? <Link href="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
-            </p>
+            <div className="mt-12 text-center">
+              <p className="text-foreground/60">
+                Already have an account?{" "}
+                <Link href="/login" className="font-semibold text-primary hover:underline">
+                  Sign in here
+                </Link>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Explore Section */}
+        <section className="bg-background px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-foreground sm:text-5xl">Explore</h2>
+              <p className="mt-4 text-lg text-foreground/60">
+                Browse available properties and discover what's available
+              </p>
+            </div>
+
+            <div className="text-center">
+              <Link href="/browse">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-base px-8">
+                  Browse All Properties
+                </Button>
+              </Link>
+              <p className="mt-6 text-sm text-foreground/50">
+                No account needed to browse. Create one when you find something you like.
+              </p>
+            </div>
           </div>
         </section>
       </main>
