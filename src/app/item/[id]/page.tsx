@@ -15,13 +15,12 @@ import {
   MapPin,
   Users,
   Calendar,
-  Tag
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence } from "framer-motion";
 import { getAssetById } from "@/lib/api/assets";
 import { createTenancyRequest } from "@/lib/api/tenancy";
 import { getApiErrorMessage } from "@/lib/api";
@@ -37,6 +36,7 @@ export default function ItemDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
 
   const numId = id ? Number(id) : NaN;
+  const isTenant = user?.role === "TENANT";
 
   useEffect(() => {
     if (!id || Number.isNaN(numId)) {
@@ -49,17 +49,12 @@ export default function ItemDetailPage() {
       .finally(() => setLoading(false));
   }, [id, numId]);
 
-  // Check if tenant
-  const isTenant = user?.role === "TENANT" || user?.roleId === 4 || user?.roleId === 2; // Adjust if needed based on constant
-  // We'll safely use role string for tenant
-  const tenant = user ? user.role === "TENANT" : false;
-
   const handleRequestTenancy = async () => {
     if (Number.isNaN(numId)) return;
     setRequesting(true);
     try {
       await createTenancyRequest(numId);
-      toast.success("Tenancy request sent successfully. The owner will review it.");
+      toast.success("Tenancy request sent. The owner will review it.");
     } catch (err) {
       toast.error(getApiErrorMessage(err));
     } finally {
@@ -69,12 +64,12 @@ export default function ItemDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col bg-secondary/10">
+      <div className="flex min-h-screen flex-col">
         <Navbar />
         <main className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-4 text-muted-foreground">
+          <div className="flex flex-col items-center gap-3 text-muted-foreground">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="font-medium animate-pulse">Loading asset details...</p>
+            <p className="text-sm font-medium">Loading asset details…</p>
           </div>
         </main>
         <Footer />
@@ -84,16 +79,16 @@ export default function ItemDetailPage() {
 
   if (!asset) {
     return (
-      <div className="flex min-h-screen flex-col bg-secondary/10">
+      <div className="flex min-h-screen flex-col">
         <Navbar />
         <main className="flex flex-1 items-center justify-center p-4">
-          <div className="text-center bg-card p-10 md:p-14 rounded-3xl border border-border/50 shadow-xl max-w-md w-full">
-            <h1 className="text-3xl font-extrabold text-foreground mb-2">Asset Not Found</h1>
-            <p className="mt-2 text-muted-foreground/80 leading-relaxed mb-8">The listing you are looking for does not exist or has been removed by the owner.</p>
-            <Button asChild className="w-full h-12 rounded-xl text-base font-semibold">
-              <Link href="/browse">
-                Back to Browse
-              </Link>
+          <div className="w-full max-w-md rounded border border-border bg-card p-10 text-center shadow-elevated">
+            <h1 className="text-2xl font-bold text-foreground">Asset Not Found</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              This listing does not exist or has been removed.
+            </p>
+            <Button asChild className="mt-6 w-full">
+              <Link href="/browse">Back to Browse</Link>
             </Button>
           </div>
         </main>
@@ -103,89 +98,83 @@ export default function ItemDetailPage() {
   }
 
   const images = asset.imageUrls?.length ? asset.imageUrls : ["/placeholder.svg"];
-  // Safely get main image or placeholder
-  const mainImage = images[selectedImage] || "/placeholder.svg";
+  const mainImage = images[selectedImage] ?? "/placeholder.svg";
+  const address = asset.addressDetails
+    ? [
+        asset.addressDetails.localAddress,
+        asset.addressDetails.city,
+        asset.addressDetails.state,
+        asset.addressDetails.country,
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex-1 bg-gradient-to-b from-secondary/20 to-background pb-16">
-        <div className="container py-8 md:py-12 max-w-6xl mx-auto px-4 sm:px-6">
+      <main className="flex-1 pb-16">
+        <div className="container max-w-6xl px-4 py-8 sm:px-6 md:py-12">
           <Link
             href="/browse"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors bg-secondary/30 px-3 py-1.5 rounded-full"
+            className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Browse
           </Link>
 
-          <div className="grid gap-12 lg:grid-cols-12">
-            
-            {/* Left Column: Images */}
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }} 
-               animate={{ opacity: 1, y: 0 }} 
-               className="lg:col-span-7 flex flex-col gap-4"
-            >
-              <div className="relative overflow-hidden rounded-3xl bg-muted border border-border/30 shadow-lg group aspect-[4/3]">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={selectedImage}
-                    src={mainImage}
-                    alt={asset.title}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="h-full w-full object-cover"
-                  />
-                </AnimatePresence>
-                
+          <div className="grid gap-10 lg:grid-cols-12">
+            {/* Images column */}
+            <div className="lg:col-span-7 flex flex-col gap-4">
+              <div className="relative aspect-[4/3] overflow-hidden rounded border border-border bg-muted shadow-card group">
+                <img
+                  src={mainImage}
+                  alt={asset.title}
+                  className="h-full w-full object-cover transition-opacity duration-150"
+                />
+
                 {images.length > 1 && (
                   <>
                     <button
-                      onClick={() =>
-                        setSelectedImage((p) => (p - 1 + images.length) % images.length)
-                      }
-                      className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 hover:bg-background text-foreground p-3 backdrop-blur-md shadow-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110"
+                      onClick={() => setSelectedImage((p) => (p - 1 + images.length) % images.length)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 rounded bg-background/80 p-2 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100 focus:opacity-100"
+                      aria-label="Previous image"
                     >
-                      <ChevronLeft className="h-6 w-6" />
+                      <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
                       onClick={() => setSelectedImage((p) => (p + 1) % images.length)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 hover:bg-background text-foreground p-3 backdrop-blur-md shadow-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded bg-background/80 p-2 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100 focus:opacity-100"
+                      aria-label="Next image"
                     >
-                      <ChevronRight className="h-6 w-6" />
+                      <ChevronRight className="h-5 w-5" />
                     </button>
-                    
-                    {/* Image indicator dots */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 bg-background/60 backdrop-blur-md px-3 py-2 rounded-full">
+                    <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5 rounded bg-background/60 px-3 py-1.5 backdrop-blur-sm">
                       {images.map((_, i) => (
                         <button
                           key={i}
                           onClick={() => setSelectedImage(i)}
-                          className={`h-2 rounded-full transition-all ${
-                            selectedImage === i ? "w-6 bg-primary" : "w-2 bg-foreground/30 hover:bg-foreground/50"
+                          aria-label={`Image ${i + 1}`}
+                          className={`h-1.5 rounded-full transition-all ${
+                            selectedImage === i ? "w-5 bg-primary" : "w-1.5 bg-foreground/30 hover:bg-foreground/50"
                           }`}
-                          aria-label={`Go to slide ${i + 1}`}
                         />
                       ))}
                     </div>
                   </>
                 )}
               </div>
-              
-              {/* Thumbnail Gallery */}
+
               {images.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                <div className="flex gap-2 overflow-x-auto pb-1">
                   {images.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setSelectedImage(i)}
-                      className={`relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted transition-all opacity-90 hover:opacity-100 ${
-                        selectedImage === i 
-                          ? "ring-2 ring-primary ring-offset-2 ring-offset-background opacity-100 scale-[1.02]" 
-                          : "border border-border/50 hover:border-border"
+                      className={`relative h-16 w-20 shrink-0 overflow-hidden rounded border transition-all ${
+                        selectedImage === i
+                          ? "border-primary ring-1 ring-primary"
+                          : "border-border opacity-70 hover:opacity-100"
                       }`}
                     >
                       <img src={img} alt="" className="h-full w-full object-cover" />
@@ -193,68 +182,52 @@ export default function ItemDetailPage() {
                   ))}
                 </div>
               )}
-            </motion.div>
+            </div>
 
-            {/* Right Column: Asset Details */}
-            <motion.div 
-               initial={{ opacity: 0, x: 20 }} 
-               animate={{ opacity: 1, x: 0 }} 
-               transition={{ delay: 0.1 }}
-               className="lg:col-span-5 flex flex-col"
-            >
-              {/* Meta information tags */}
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <Badge variant="secondary" className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20">
-                  {asset.categoryName ?? "Categorized Asset"}
+            {/* Details column */}
+            <div className="lg:col-span-5 flex flex-col">
+              <div className="flex flex-wrap gap-2 mb-3">
+                <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
+                  {asset.categoryName ?? "Asset"}
                 </Badge>
               </div>
 
-              {/* Title & Description */}
-              <h1 className="text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl md:text-5xl leading-tight mb-4">
-                 {asset.title}
+              <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                {asset.title}
               </h1>
-              
-              <div className="flex flex-col gap-3 py-4 border-y border-border/40 my-2">
-                 {asset.addressDetails && (
-                   <div className="flex items-start gap-3 text-muted-foreground">
-                      <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="font-medium">
-                        {[
-                          asset.addressDetails.localAddress,
-                          asset.addressDetails.city,
-                          asset.addressDetails.state,
-                          asset.addressDetails.country,
-                        ].filter(Boolean).join(", ")}
-                      </span>
-                   </div>
-                 )}
-                 
-                 <div className="flex items-center gap-3 text-muted-foreground">
-                    <Users className="h-5 w-5 text-primary shrink-0" />
-                    <span className="font-medium">Capacity / Size: <span className="text-foreground">{asset.capacity} Unit(s)</span></span>
-                 </div>
-                 
-                 <div className="flex items-center gap-3 text-muted-foreground">
-                    <Calendar className="h-5 w-5 text-primary shrink-0" />
-                    <span className="font-medium">Listed on: <span className="text-foreground">{new Date(asset.createdAt).toLocaleDateString()}</span></span>
-                 </div>
+
+              <div className="my-4 flex flex-col gap-2.5 border-y border-border py-4">
+                {address && (
+                  <div className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{address}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <Users className="h-4 w-4 shrink-0 text-primary" />
+                  <span>Capacity: <span className="font-medium text-foreground">{asset.capacity} unit(s)</span></span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4 shrink-0 text-primary" />
+                  <span>Listed: <span className="font-medium text-foreground">{new Date(asset.createdAt).toLocaleDateString()}</span></span>
+                </div>
               </div>
 
-              <div className="pt-2 pb-6">
-                <h3 className="text-lg font-bold text-foreground mb-2">Description</h3>
-                <p className="text-muted-foreground leading-relaxed text-[15px]">
-                  {asset.description || "No description provided for this asset."}
+              <div className="pb-5">
+                <h3 className="mb-1.5 text-sm font-semibold text-foreground">Description</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {asset.description || "No description provided."}
                 </p>
               </div>
 
               {asset.tags && asset.tags.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
-                     <Tag className="h-4 w-4" /> Keywords
+                <div className="mb-6">
+                  <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Tag className="h-3 w-3" /> Tags
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {asset.tags.map((t) => (
-                      <Badge key={t} variant="outline" className="px-3 py-1 bg-secondary/30">
+                      <Badge key={t} variant="outline" className="text-xs">
                         {t}
                       </Badge>
                     ))}
@@ -262,48 +235,45 @@ export default function ItemDetailPage() {
                 </div>
               )}
 
-              {/* Pricing & Call to Action Box */}
-              <div className="mt-auto rounded-3xl border border-border/60 bg-card/60 backdrop-blur-xl p-8 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-                
-                <div className="flex flex-col gap-1 mb-6 relative z-10">
-                   <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Monthly Rent</p>
-                   <div className="text-5xl font-extrabold text-foreground flex items-baseline gap-2">
-                     ${Number(asset.rent).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                     <span className="text-base font-medium text-muted-foreground">/ month</span>
-                   </div>
+              {/* Pricing CTA */}
+              <div className="mt-auto rounded border border-border bg-card p-6 shadow-card">
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Monthly Rent</p>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span className="text-4xl font-bold text-foreground">
+                    ${Number(asset.rent).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                  <span className="text-sm text-muted-foreground">/ month</span>
                 </div>
-                
-                <div className="flex flex-col gap-3 relative z-10">
-                  {tenant ? (
+
+                <div className="mt-5 flex flex-col gap-2.5">
+                  {isTenant ? (
                     <Button
-                      className="w-full h-14 rounded-xl text-lg font-bold shadow-lg hover:shadow-primary/25 transition-all gap-2"
+                      className="w-full gap-2"
                       onClick={handleRequestTenancy}
                       disabled={requesting}
                     >
-                      <Send className="h-5 w-5" />
+                      <Send className="h-4 w-4" />
                       {requesting ? "Sending Request…" : "Request Tenancy"}
                     </Button>
                   ) : (
-                    <div className="w-full h-14 rounded-xl border border-destructive/20 bg-destructive/5 text-destructive font-semibold flex items-center justify-center">
-                       Only tenants can request tenancy.
+                    <div className="flex w-full items-center justify-center rounded border border-destructive/20 bg-destructive/5 py-2.5 text-sm font-medium text-destructive">
+                      Only tenants can request tenancy.
                     </div>
                   )}
-                  
-                  <Button variant="outline" className="w-full h-12 rounded-xl gap-2 font-semibold border-border/80 bg-background/50 hover:bg-secondary/50" asChild>
+                  <Button variant="outline" className="w-full gap-2" asChild>
                     <Link href="/dashboard/messages">
-                      <MessageCircle className="h-5 w-5 text-muted-foreground" />
+                      <MessageCircle className="h-4 w-4 text-muted-foreground" />
                       Contact Owner
                     </Link>
                   </Button>
                 </div>
-                
-                <div className="mt-6 flex items-center justify-center gap-2 text-xs font-semibold text-emerald-600 bg-emerald-500/10 py-2.5 rounded-lg border border-emerald-500/20">
-                  <Shield className="h-4 w-4" />
-                  Protected by standard RMS platform guarantee
+
+                <div className="mt-4 flex items-center justify-center gap-2 rounded border border-emerald-200 bg-emerald-50 py-2 text-xs font-medium text-emerald-700">
+                  <Shield className="h-3.5 w-3.5" />
+                  Protected by RMS platform guarantee
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </main>
