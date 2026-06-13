@@ -4,6 +4,9 @@ import type { NextRequest } from "next/server";
 const PUBLIC_PATHS = ["/", "/login", "/register", "/browse", "/payment"];
 
 export function middleware(request: NextRequest) {
+
+  return NextResponse.next();
+
   const { pathname } = request.nextUrl;
 
   const isPublic = PUBLIC_PATHS.some(

@@ -44,6 +44,7 @@ function processQueue(error: unknown) {
 
 function redirectToLogin() {
   if (typeof window !== "undefined") {
+    try { localStorage.removeItem("authState"); } catch { /* ignore */ }
     window.location.href = "/login";
   }
 }
