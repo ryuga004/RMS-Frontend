@@ -39,7 +39,7 @@ function SuccessContent() {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild>
-            <Link href="/dashboard/payment-history" className="gap-2">
+            <Link href="/dashboard/transactions" className="gap-2">
               <Receipt className="h-4 w-4" />
               View Payment History
             </Link>

@@ -26,7 +26,7 @@ export default function PaymentCancelPage() {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild>
-            <Link href="/dashboard/payments" className="gap-2">
+            <Link href="/dashboard/pay" className="gap-2">
               <CreditCard className="h-4 w-4" />
               Try Again
             </Link>

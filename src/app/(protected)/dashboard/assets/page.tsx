@@ -94,7 +94,7 @@ export default function ListingsPage() {
           </p>
         </div>
         <Button className="gap-2" asChild>
-          <Link href="/list-item">
+          <Link href="/dashboard/assets/new">
             <Plus className="h-4 w-4" /> List New Item
           </Link>
         </Button>
@@ -126,7 +126,7 @@ export default function ListingsPage() {
                       <div className="flex flex-col items-center justify-center gap-2">
                         <ImageIcon className="h-10 w-10 text-muted-foreground/30" />
                         <p>No listings found.</p>
-                        <Link href="/list-item" className="text-primary font-medium hover:underline mt-1 hover:text-primary/90">
+                        <Link href="/dashboard/assets/new" className="text-primary font-medium hover:underline mt-1 hover:text-primary/90">
                           Create your first listing
                         </Link>
                       </div>
@@ -172,12 +172,12 @@ export default function ListingsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem className="gap-2.5 cursor-pointer font-medium" asChild>
-                              <Link href={`/edit-item/${listing.id}`}>
+                              <Link href={`/dashboard/assets/${listing.id}`}>
                                 <Edit className="h-4 w-4 text-blue-500" /> Edit
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem className="gap-2.5 cursor-pointer font-medium" asChild>
-                              <Link href={`/item/${listing.id}`}>
+                              <Link href={`/browse/${listing.id}`}>
                                 <Eye className="h-4 w-4 text-green-500" /> View
                               </Link>
                             </DropdownMenuItem>

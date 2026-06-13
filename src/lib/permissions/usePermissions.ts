@@ -7,7 +7,7 @@ import type { RoleId } from "./types";
 import type { RootState } from "@/lib/redux/store";
 
 function isValidRoleId(roleId: unknown): roleId is RoleId {
-  return typeof roleId === "number" && Object.values(ROLE_ID).includes(roleId);
+  return typeof roleId === "number" && Object.values(ROLE_ID).includes(roleId as RoleId);
 }
 
 export function usePermissions() {

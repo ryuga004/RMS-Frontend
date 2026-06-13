@@ -136,7 +136,7 @@ export default function RentalsPage() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-48 bg-background/95 backdrop-blur-xl border-border/50 p-1">
                                             <DropdownMenuItem asChild className="gap-2 cursor-pointer">
-                                                <Link href={`/item/${rental.id}`}>
+                                                <Link href={`/browse/${rental.id}`}>
                                                     <ExternalLink className="h-4 w-4 text-blue-500" /> 
                                                     <span>View Details</span>
                                                 </Link>

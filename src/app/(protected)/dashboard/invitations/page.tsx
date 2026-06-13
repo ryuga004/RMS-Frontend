@@ -106,7 +106,7 @@ export default function InvitationsPage() {
                   <X className="h-4 w-4" /> Reject
                 </Button>
                 <Button variant="ghost" size="sm" asChild>
-                  <a href={`/item/${inv.assetId}`}>View asset</a>
+                  <a href={`/browse/${inv.assetId}`}>View asset</a>
                 </Button>
               </CardContent>
             </Card>

@@ -80,7 +80,7 @@ export default function DashboardPage() {
               title="Listings"
               value={stats.listings}
               icon={FolderOpen}
-              href="/dashboard/listings"
+              href="/dashboard/assets"
               description="Active properties"
             />
             <StatsCard
@@ -94,7 +94,7 @@ export default function DashboardPage() {
               title="Transactions"
               value={null}
               icon={CreditCard}
-              href="/dashboard/payment-history"
+              href="/dashboard/transactions"
               description="View history"
             />
           </>
@@ -111,14 +111,14 @@ export default function DashboardPage() {
               title="Payment History"
               value={null}
               icon={CreditCard}
-              href="/dashboard/payment-history"
+              href="/dashboard/transactions"
               description="All transactions"
             />
             <StatsCard
               title="Payment Methods"
               value={null}
               icon={CreditCard}
-              href="/dashboard/payment-options"
+              href="/dashboard/payment-plans"
               description="Manage payments"
             />
           </>
@@ -135,16 +135,16 @@ export default function DashboardPage() {
           <div className="grid gap-2 md:grid-cols-2">
             {admin ? (
               <>
-                <NavLink href="/dashboard/listings" label="View Listings" />
+                <NavLink href="/dashboard/assets" label="View Listings" />
                 <NavLink href="/dashboard/tenants" label="Manage Tenants" />
-                <NavLink href="/dashboard/payment-history" label="View Transactions" />
-                <NavLink href="/dashboard/payment-options" label="Payment Settings" />
+                <NavLink href="/dashboard/transactions" label="View Transactions" />
+                <NavLink href="/dashboard/payment-plans" label="Payment Settings" />
               </>
             ) : (
               <>
                 <NavLink href="/dashboard/rentals" label="My Rentals" />
-                <NavLink href="/dashboard/payment-history" label="Payment History" />
-                <NavLink href="/dashboard/payment-options" label="Payment Methods" />
+                <NavLink href="/dashboard/transactions" label="Payment History" />
+                <NavLink href="/dashboard/payment-plans" label="Payment Methods" />
               </>
             )}
           </div>

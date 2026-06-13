@@ -15,15 +15,12 @@ import type { RouteConfig } from "./types";
 export const ROUTES = {
   BROWSE: PUBLIC_ROUTES_CONFIG.BROWSE,
   DASHBOARD: {
-    ROOT: { path: "/dashboard", label: "Dashboard", privileges: [ROLE_ID.ADMIN] },
+    ROOT: { path: "/dashboard", label: "Dashboard", privileges: [ROLE_ID.ADMIN, ROLE_ID.SUPER_ADMIN, ROLE_ID.TENANT] as const },
     ...DASHBOARD_ROUTES_CONFIG,
   },
-  LIST_ITEM: PUBLIC_ROUTES_CONFIG.LIST_ITEM,
-  EDIT_ITEM: PUBLIC_ROUTES_CONFIG.EDIT_ITEM,
-  ITEM: PUBLIC_ROUTES_CONFIG.ITEM_DETAIL,
   PAYMENT_SUCCESS: PAYMENT_ROUTES_CONFIG.SUCCESS,
   PAYMENT_CANCEL: PAYMENT_ROUTES_CONFIG.CANCEL,
-} as const;
+};
 
 /**
  * Dashboard routes as array (for iteration)
@@ -44,7 +41,7 @@ export const getAllRoutes = (): RouteConfig[] => {
     ...PUBLIC_ROUTES_ARRAY,
     ROUTES.DASHBOARD.ROOT,
     ...DASHBOARD_ROUTES_ARRAY,
-  ];
+  ] as RouteConfig[];
 };
 
 export type { RouteConfig } from "./types";

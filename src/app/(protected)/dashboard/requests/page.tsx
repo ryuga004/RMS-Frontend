@@ -135,7 +135,7 @@ export default function RequestsPage() {
                         <X className="w-4 h-4 mr-2" /> Reject
                       </Button>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/item/${req.assetId}`}>View Asset</Link>
+                        <Link href={`/browse/${req.assetId}`}>View Asset</Link>
                       </Button>
                     </div>
                   </div>
@@ -181,7 +181,7 @@ export default function RequestsPage() {
                         Pending Approval
                       </div>
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/item/${req.assetId}`}>View Details</Link>
+                        <Link href={`/browse/${req.assetId}`}>View Details</Link>
                       </Button>
                     </div>
                   </CardHeader>

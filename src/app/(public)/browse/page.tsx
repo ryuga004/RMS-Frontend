@@ -224,7 +224,7 @@ function BrowseContent() {
                   {rows.map((item) => (
                     <Link
                       key={item.id}
-                      href={`/item/${item.id}`}
+                      href={`/browse/${item.id}`}
                       className={`group block overflow-hidden rounded border border-border bg-card shadow-card transition-shadow hover:shadow-card-hover ${
                         viewMode === "list" ? "flex" : ""
                       }`}

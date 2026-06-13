@@ -8,7 +8,9 @@ export default function NotFound() {
     const pathname = usePathname();
 
     useEffect(() => {
-        console.error("404 Error: User attempted to access non-existent route:", pathname);
+        if (pathname) {
+            console.error("404 Error: User attempted to access non-existent route:", pathname);
+        }
     }, [pathname]);
 
     return (

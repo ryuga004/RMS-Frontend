@@ -39,22 +39,22 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
   {
     label: "Manage",
     items: [
-      { href: "/dashboard/listings", label: "Listings", icon: FolderOpen },
+      { href: "/dashboard/assets", label: "Listings", icon: FolderOpen },
       { href: "/dashboard/tenants", label: "Tenants", icon: Users },
-      { href: "/dashboard/payment-history", label: "Transactions", icon: CreditCard },
+      { href: "/dashboard/transactions", label: "Transactions", icon: CreditCard },
     ],
   },
   {
     label: "Notifications",
     items: [
       { href: "/dashboard/requests", label: "Requests", icon: Inbox },
-      { href: "/dashboard/audits", label: "Activity Log", icon: Bell },
+      { href: "/dashboard/audit-log", label: "Activity Log", icon: Bell },
     ],
   },
   {
     label: "Administration",
     items: [
-      { href: "/dashboard/payment-options", label: "Payment Settings", icon: Settings },
+      { href: "/dashboard/payment-plans", label: "Payment Settings", icon: Settings },
     ],
     isAdmin: true,
   },
@@ -73,7 +73,8 @@ const TENANT_NAV_GROUPS: NavGroup[] = [
     label: "My Activity",
     items: [
       { href: "/dashboard/rentals", label: "Active Rentals", icon: FolderOpen },
-      { href: "/dashboard/payment-history", label: "Payment History", icon: CreditCard },
+      { href: "/dashboard/transactions", label: "Payment History", icon: CreditCard },
+      { href: "/dashboard/pay", label: "Make a Payment", icon: CreditCard },
     ],
   },
   {
@@ -81,12 +82,8 @@ const TENANT_NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/dashboard/invitations", label: "Invitations", icon: Bell },
       { href: "/dashboard/messages", label: "Messages", icon: Send },
-    ],
-  },
-  {
-    label: "Administration",
-    items: [
-      { href: "/dashboard/payment-options", label: "Payment Settings", icon: Settings },
+      { href: "/dashboard/requests", label: "Requests", icon: Inbox },
+      { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
     ],
   },
 ];
