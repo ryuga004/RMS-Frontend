@@ -1,8 +1,3 @@
-/**
- * Public routes configuration
- * Routes that don't require specific privileges
- */
-
 import type { RouteConfig } from "./types";
 
 export const PUBLIC_ROUTES_CONFIG: Record<string, RouteConfig> = {

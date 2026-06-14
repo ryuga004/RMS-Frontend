@@ -28,8 +28,6 @@ import { getApiErrorMessage } from "@/lib/api";
 import type { PaymentOption } from "@/types/payment";
 import type { AssetListItem } from "@/types";
 import { toast } from "sonner";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { ROUTES } from "@/constants";
 
 function PaymentsContent() {
   const [rentals, setRentals] = useState<AssetListItem[]>([]);
@@ -258,9 +256,5 @@ function PaymentsContent() {
 }
 
 export default function PaymentsPage() {
-  return (
-    <ProtectedRoute requiredPrivileges={ROUTES.DASHBOARD.PAYMENTS.privileges}>
-      <PaymentsContent />
-    </ProtectedRoute>
-  );
+  return <PaymentsContent />;
 }

@@ -1,50 +1,25 @@
-/**
- * Routes configuration (Main index file)
- * Combines all route definitions for easy access
- */
-
 import { ROLE_ID } from "./role-definitions";
-import { DASHBOARD_ROUTES_CONFIG, DASHBOARD_ROUTES_ARRAY } from "./dashboard-routes";
-import { PUBLIC_ROUTES_CONFIG, PAYMENT_ROUTES_CONFIG, PUBLIC_ROUTES_ARRAY } from "./public-routes";
-import type { RouteConfig } from "./types";
 
-/**
- * All routes organized by category
- * Use these for accessing specific route definitions
- */
-export const ROUTES = {
-  BROWSE: PUBLIC_ROUTES_CONFIG.BROWSE,
-  DASHBOARD: {
-    ROOT: { path: "/dashboard", label: "Dashboard", privileges: [ROLE_ID.ADMIN] },
-    ...DASHBOARD_ROUTES_CONFIG,
-  },
-  LIST_ITEM: PUBLIC_ROUTES_CONFIG.LIST_ITEM,
-  EDIT_ITEM: PUBLIC_ROUTES_CONFIG.EDIT_ITEM,
-  ITEM: PUBLIC_ROUTES_CONFIG.ITEM_DETAIL,
-  PAYMENT_SUCCESS: PAYMENT_ROUTES_CONFIG.SUCCESS,
-  PAYMENT_CANCEL: PAYMENT_ROUTES_CONFIG.CANCEL,
-} as const;
+export const ROUTES = [
+  { path: "/browse",           label: "Browse",           privileges: [] },
+  { path: "/list-item",        label: "List Item",        privileges: [] },
+  { path: "/edit-item/[id]",   label: "Edit Item",        privileges: [ROLE_ID.ADMIN] },
+  { path: "/item/[id]",        label: "Item Detail",      privileges: [] },
+  { path: "/payment/success",  label: "Payment Success",  privileges: [] },
+  { path: "/payment/cancel",   label: "Payment Canceled", privileges: [] },
 
-/**
- * Dashboard routes as array (for iteration)
- * Use for filtering routes by privileges
- */
-export const DASHBOARD_ROUTES = DASHBOARD_ROUTES_ARRAY;
+  { path: "/dashboard",                  label: "Dashboard",        privileges: [ROLE_ID.SUPER_ADMIN, ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/payments",         label: "Payments",         privileges: [ROLE_ID.ADMIN] },
+  { path: "/dashboard/payment-options",  label: "Payment Options",  privileges: [ROLE_ID.ADMIN] },
+  { path: "/dashboard/payment-history",  label: "Payment History",  privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/profile",          label: "Profile",          privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/listings",         label: "Listings",         privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/requests",         label: "Requests",         privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/messages",         label: "Messages",         privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/notifications",    label: "Notifications",    privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/invitations",      label: "Invitations",      privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/tenants",          label: "Tenants",          privileges: [ROLE_ID.ADMIN]},
+  { path: "/dashboard/audits",           label: "Audits",           privileges: [ROLE_ID.SUPER_ADMIN] },
+] as const;
 
-/**
- * Public routes as array
- */
-export const PUBLIC_ROUTES = PUBLIC_ROUTES_ARRAY;
-
-/**
- * Get all routes
- */
-export const getAllRoutes = (): RouteConfig[] => {
-  return [
-    ...PUBLIC_ROUTES_ARRAY,
-    ROUTES.DASHBOARD.ROOT,
-    ...DASHBOARD_ROUTES_ARRAY,
-  ];
-};
-
-export type { RouteConfig } from "./types";
+export type Route = typeof ROUTES[number];

@@ -1,10 +1,15 @@
 "use client";
 
-import { usePermissions, RouteFilter } from "@/lib/permissions";
-import { DASHBOARD_ROUTES } from "@/constants";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/lib/redux/store";
 import { NavLink } from "@/components/NavLink";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "@/constants/routes";
+
+function canAccess(privileges: readonly number[], roleId: number | null): boolean {
+  return privileges.length === 0 || (roleId !== null && privileges.includes(roleId));
+}
 
 interface SidebarProps {
   className?: string;
@@ -17,11 +22,13 @@ export function Sidebar({
   itemClassName = "block px-4 py-2 rounded-md text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted",
   activeItemClassName = "bg-primary text-primary-foreground",
 }: SidebarProps) {
-  const { userRole } = usePermissions();
+  const user = useSelector((state: RootState) => state.auth?.user ?? null);
+  const roleId = typeof user?.roleId === "number" ? user.roleId : null;
   const pathname = usePathname();
 
-  // Get only routes accessible to the current user
-  const accessibleRoutes = RouteFilter.getAccessibleDashboardRoutes(userRole);
+  const accessibleRoutes = ROUTES.filter(
+    (r) => r.path.startsWith("/dashboard") && canAccess(r.privileges, roleId)
+  );
 
   if (!accessibleRoutes.length) {
     return (
@@ -36,20 +43,16 @@ export function Sidebar({
   return (
     <aside className={className}>
       <nav className="space-y-1">
-        {accessibleRoutes.map((route) => {
-          const isActive = pathname === route.path;
-
-          return (
-            <NavLink
-              key={route.path}
-              href={route.path}
-              className={cn(itemClassName)}
-              activeClassName={activeItemClassName}
-            >
-              {route.label}
-            </NavLink>
-          );
-        })}
+        {accessibleRoutes.map((route) => (
+          <NavLink
+            key={route.path}
+            href={route.path}
+            className={cn(itemClassName)}
+            activeClassName={activeItemClassName}
+          >
+            {route.label}
+          </NavLink>
+        ))}
       </nav>
     </aside>
   );
