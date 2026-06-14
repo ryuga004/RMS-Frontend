@@ -15,8 +15,8 @@ export function DashboardSidebar() {
 
   return (
     <aside className="hidden w-64 h-[calc(100vh-4rem)] border-r border-secondary bg-background/50 md:flex md:flex-col md:overflow-hidden md:flex-shrink-0">
-      <nav className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-6">
+      <nav className="flex-1 overflow-y-auto no-scrollbar p-4">
+        <div className="space-y-4">
           {mainGroups.map((group) => (
             <NavGroup
               key={group.idx}

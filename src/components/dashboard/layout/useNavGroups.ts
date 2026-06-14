@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/lib/redux/store";
-import { isAdmin, ROLE_ID_ADMIN, ROLE_ID_TENANT } from "@/types";
+import { isAdmin, ROLE_ID_ADMIN, ROLE_ID_SUPER_ADMIN, ROLE_ID_TENANT } from "@/types";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -57,10 +57,9 @@ const DASHBOARD_GROUP: NavGroupDef[] = [
     label: "Administration",
     items: [
       { href: "/dashboard/payment-options", label: "Payment Settings", icon: Settings, privilages: [ROLE_ID_ADMIN] },
-      { href: "/dashboard/audits", label: "Activity Log", icon: Bell, privilages: [ROLE_ID_ADMIN] },
+      { href: "/dashboard/audits", label: "Activity Log", icon: Bell, privilages: [ROLE_ID_SUPER_ADMIN] },
     ],
     privilages: [ROLE_ID_ADMIN],
-    pinned: true,
   },
 ];
 

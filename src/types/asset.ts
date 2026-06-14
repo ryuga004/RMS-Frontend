@@ -5,6 +5,8 @@ export interface AddressDetails {
   country?: string;
 }
 
+export type AssetStatus = "AVAILABLE" | "OCCUPIED" | "REPAIRING" | "INACTIVE";
+
 export interface AssetListItem {
   id: number;
   title: string;
@@ -13,6 +15,11 @@ export interface AssetListItem {
   categoryName: string;
   imageKey?: string | null;
   imageUrl?: string | null;
+  // Extended fields — populated when the API returns them
+  status?: AssetStatus | null;
+  address?: string | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
 }
 
 export interface AssetDetailResponse {
