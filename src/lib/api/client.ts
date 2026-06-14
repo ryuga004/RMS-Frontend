@@ -1,8 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import type { ApiResponse } from "@/types";
 
-// For production, use NEXT_PUBLIC_API_URL from Vercel env var
-// For local dev, fallback to localhost:8080
 const baseURL = process.env.NEXT_PUBLIC_API_URL ||
   (typeof window !== "undefined" && window.location.hostname === "localhost"
     ? "http://localhost:8080"
