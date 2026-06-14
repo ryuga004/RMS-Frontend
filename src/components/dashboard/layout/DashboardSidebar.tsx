@@ -3,10 +3,11 @@
 import { usePathname } from "next/navigation";
 import { NavGroup } from "./NavGroup";
 import { useNavGroups } from "./useNavGroups";
+import { ROLE_ID_ADMIN } from "@/types";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { groups, expandedGroups, toggleGroup, user, isAdminUser } = useNavGroups();
+  const { groups, expandedGroups, toggleGroup, user } = useNavGroups();
 
   const indexedGroups = groups.map((g, idx) => ({ ...g, idx }));
   const mainGroups = indexedGroups.filter((g) => !g.pinned);
@@ -42,7 +43,7 @@ export function DashboardSidebar() {
         <div className="pt-2 border-t border-secondary/50">
           <div className="space-y-2 px-3 py-2">
             <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
-              {isAdminUser ? "Administrator" : "Renter"}
+              {user?.roleId===ROLE_ID_ADMIN ? "Admin" : "Renter"}
             </p>
             <p className="text-sm font-medium text-foreground">{user?.name ?? "User"}</p>
             <p className="text-xs text-foreground/50">{user?.email}</p>

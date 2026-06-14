@@ -8,6 +8,7 @@ export type NavGroupDef = {
   label?: string;
   items: NavItemDef[];
   pinned?: boolean;
+  privilages?: Array<number>
 };
 
 type NavGroupProps = {

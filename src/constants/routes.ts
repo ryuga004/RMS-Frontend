@@ -1,7 +1,9 @@
 import { ROLE_ID } from "./role-definitions";
 
 export const ROUTES = [
-  { path: "/browse",           label: "Browse",           privileges: [] },
+  { path: "/login",            label: "Login",            privileges: [] },
+  { path: "/register",         label: "Register",         privileges: [] },
+  { path: "/get-started",      label: "Get Started",      privileges: [] },
   { path: "/list-item",        label: "List Item",        privileges: [] },
   { path: "/edit-item/[id]",   label: "Edit Item",        privileges: [ROLE_ID.ADMIN] },
   { path: "/item/[id]",        label: "Item Detail",      privileges: [] },

@@ -8,6 +8,7 @@ export type NavItemDef = {
   href: string;
   label: string;
   icon: React.ElementType;
+  privilages: Array<number>
 };
 
 type NavItemProps = {
