@@ -20,7 +20,7 @@ type NavGroupProps = {
 
 export function NavGroup({ group, isExpanded, onToggle, activePath }: NavGroupProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {group.label && (
         <div
           className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-secondary/50 rounded-md transition-colors group/header"

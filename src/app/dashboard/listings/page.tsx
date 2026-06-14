@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { DataTable, type ColumnDef } from "@/components/ui/data-table";
-import { Plus, Edit, Trash2, ImageIcon, Bed, Bath, Search } from "lucide-react";
+import { ListingFormDrawer } from "@/components/dashboard/listings/ListingFormDrawer";
+import { Plus, Eye, Edit, Trash2, ImageIcon, Bed, Bath, Search } from "lucide-react";
 import { getMyAssets, deleteAsset } from "@/lib/api/assets";
 import { getApiErrorMessage } from "@/lib/api";
 import type { AssetListItem, AssetStatus } from "@/types";
@@ -137,6 +138,16 @@ function buildColumns(
           <Button
             variant="ghost"
             size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+            asChild
+          >
+            <Link href={`/item/${row.id}`}>
+              <Eye className="h-4 w-4" />
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
             asChild
           >
@@ -168,6 +179,7 @@ export default function ListingsPage() {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
@@ -220,10 +232,8 @@ export default function ListingsPage() {
             View, edit, or remove your property listings.
           </p>
         </div>
-        <Button className="gap-2" asChild>
-          <Link href="/list-item">
-            <Plus className="h-4 w-4" /> List New Item
-          </Link>
+        <Button className="gap-2" onClick={() => setDrawerOpen(true)}>
+          <Plus className="h-4 w-4" /> List New Item
         </Button>
       </div>
 
@@ -249,6 +259,12 @@ export default function ListingsPage() {
           </Button>
         )}
       </form>
+
+      <ListingFormDrawer
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        onSuccess={fetchListings}
+      />
 
       {/* Table */}
       <DataTable

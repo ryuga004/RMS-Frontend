@@ -48,7 +48,7 @@ const DASHBOARD_GROUP: NavGroupDef[] = [
     label: "Notifications",
     items: [
       { href: "/dashboard/requests", label: "Requests", icon: Inbox, privilages: [ROLE_ID_ADMIN, ROLE_ID_TENANT] },
-      { href: "/dashboard/invitations", label: "Invitations", icon: Bell, privilages: [ROLE_ID_ADMIN, ROLE_ID_TENANT] },
+      { href: "/dashboard/invitations", label: "Invitations", icon: Bell, privilages: [ROLE_ID_TENANT] },
       { href: "/dashboard/messages", label: "Messages", icon: Send, privilages: [ROLE_ID_ADMIN, ROLE_ID_TENANT]},
     ],
     privilages: [ROLE_ID_ADMIN, ROLE_ID_TENANT]

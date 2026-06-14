@@ -19,7 +19,7 @@ export const ROUTES = [
   { path: "/dashboard/requests",         label: "Requests",         privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
   { path: "/dashboard/messages",         label: "Messages",         privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
   { path: "/dashboard/notifications",    label: "Notifications",    privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
-  { path: "/dashboard/invitations",      label: "Invitations",      privileges: [ROLE_ID.ADMIN, ROLE_ID.TENANT] },
+  { path: "/dashboard/invitations",      label: "Invitations",      privileges: [ROLE_ID.TENANT] },
   { path: "/dashboard/tenants",          label: "Tenants",          privileges: [ROLE_ID.ADMIN]},
   { path: "/dashboard/audits",           label: "Audits",           privileges: [ROLE_ID.SUPER_ADMIN] },
 ] as const;
